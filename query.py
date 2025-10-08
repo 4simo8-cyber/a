@@ -12,7 +12,10 @@ def con():
 
 def insert(name , price , stock,photo):
     conn,cursor=con()
-    cursor.execute('''INSERT OR IGNORE INTO product (name,price,stock,photo) VALUES(%s,%s,%s,%s) ''', (name,price,stock,psycopg2.Binary(photo)) )
+    cursor.execute('''INSERT INTO product (name, price, stock, photo) VALUES (%s, %s, %s, %s) 
+                  ON CONFLICT (name) DO UPDATE SET price = EXCLUDED.price, stock = EXCLUDED.stock, photo = EXCLUDED.photo''', 
+               (name, price, stock, psycopg2.Binary(photo)))
+    
     conn.commit()
     conn.close()
 
